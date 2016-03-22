@@ -4,14 +4,18 @@ import struct
 import sys
 import os
 
-
 try :
+  argc = len(sys.argv)
 	input_file = open(sys.argv[1],"rb")
+	if argc >= 2:
+	  result_file = sys.argv[2];
+	 else
+	  result_file = "result.txt"
 except IOError:
-    print "I/O error: file doesn't exist";sys.exit()
+  print "I/O error: file doesn't exist"; sys.exit()
 except IndexError:
-	print "usage : " + sys.argv[0]+" FILE";sys.exit()
-result = open("result.txt","wb")
+	print "usage : " + sys.argv[0]+" FILE [RESULT]"; sys.exit()
+result = open(result_file, "wb")
 bin = input_file.read()
 result_directory = os.getcwd()
 
@@ -55,13 +59,15 @@ def sPLFEntryTag(index):
 if bin[index:index+4].encode("hex") == "504c4621":
 	index = sPLFFile(index)
 
-while(1):
-	if bin[index:index+4].encode("hex") == "00000000" or "00000003" or "00000007" or "00000009" or "0000000b" or "0000000c":
-		if index%4 != 0 :
-			index+=4-(index%4)
-		index = sPLFEntryTag(index)
-		if file_size <= index:
-			break	
-input_file.close()
-result.close()
-print " Result File store in " + result_directory
+if __name__ == "__main__":
+  while(1):
+  	if bin[index:index+4].encode("hex") == "00000000" or "00000003" or "00000007" or "00000009" or "0000000b" or "0000000c":
+  		if index%4 != 0 :
+  			index+=4-(index%4)
+  		index = sPLFEntryTag(index)
+  		if file_size <= index:
+  			break
+  
+  input_file.close()
+  result.close()
+  print " Result File store in " + result_directory + "/result.txt"
