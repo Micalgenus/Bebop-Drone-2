@@ -6,19 +6,16 @@ import os
 
 try :
   argc = len(sys.argv)
-<<<<<<< HEAD
   input_file = open(sys.argv[1],"rb")
   if argc >= 2:
     result_file = sys.argv[2];
   else:
     result_file = "result.txt"
-=======
 	input_file = open(sys.argv[1],"rb")
 	if argc >= 2:
 	  result_file = sys.argv[2];
 	else:
 	  result_file = "result.txt"
->>>>>>> 696d1e37d77d58d98cbbd05f128700e4c7558dd2
 except IOError:
   print "I/O error: file doesn't exist"; sys.exit()
 except IndexError:
