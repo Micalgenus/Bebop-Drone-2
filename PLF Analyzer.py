@@ -11,10 +11,10 @@ try :
     result_file = sys.argv[2];
   else:
     result_file = "result.txt"
-	input_file = open(sys.argv[1],"rb")
-	if argc >= 2:
+    input_file = open(sys.argv[1],"rb")
+  if argc >= 2:
 	  result_file = sys.argv[2];
-	else:
+  else:
 	  result_file = "result.txt"
 except IOError:
   print "I/O error: file doesn't exist"; sys.exit()
