@@ -11,7 +11,7 @@ next_index = 0
 result_dir = ""
 
 def Init():
-	global bin, result, input_file
+	global bin, result, input_file, result_dir
 	argc = len(sys.argv)
 	if argc < 2:
 		print "Usage: " + sys.argv[0] + " FILE [RESULT]"
@@ -91,7 +91,9 @@ if __name__ == "__main__":
 			index += size
 			if header == "00000009":
 #				print start, end
-				tmp_data = Extract(bin, start, end)
+				(error, tmp_file) = Extract(bin, start, end)
+				if not error:
+					MakeFile(tmp_file, result_dir + "/rootfs")
 #				MakeFile(
 			if file_size <= index:
 				break
