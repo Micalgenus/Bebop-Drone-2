@@ -23,10 +23,11 @@ def Extract(data, start, end):
 		gtmp.close()
 		otmp.close()
 
-		os.remove(tmp_file_gz)
 		error = False
 	else:
 		error = True
+	
+#	os.remove(tmp_file_gz)
 	return error, tmp_file
 
 def MakeFile(tfile, path):
@@ -74,5 +75,6 @@ def MakeFile(tfile, path):
 			f = open(directory + "/" + filename, "wb")
 			f.write(file_data)
 			f.close()
+			os.remove(tfile)
 			return None
 
