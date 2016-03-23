@@ -1,4 +1,7 @@
 #!/usr/bin/env python
 
-def Extract(start, end):
+def Extract():
+	
+
+def GetDataList():
 	
