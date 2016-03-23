@@ -4,6 +4,8 @@ import struct
 import sys
 import os
 
+import Data_Extract.py
+
 index = 0
 next_index = 0
 
@@ -12,9 +14,9 @@ def Init() :
 	argc = len(sys.argv)
 	if argc < 2 :
 		print "Usage: " + sys.argv[0] + " FILE [RESULT]"
-		print "  FILE: PLF File"
-		print "  RESULT: Make result directory"
-		print "          default: plf"
+		print "	FILE: PLF File"
+		print "	RESULT: Make result directory"
+		print "					default: plf"
 		sys.exit()
 	if argc >= 2 :
 		try :
@@ -36,7 +38,7 @@ def Init() :
 	bin = input_file.read()
 
 def EndianConvert(number):
-  return 0x1000000 * ord(number[3]) + 0x10000 * ord(number[2]) + 0x100 * ord(number[1]) + ord(number[0])
+	return 0x1000000 * ord(number[3]) + 0x10000 * ord(number[2]) + 0x100 * ord(number[1]) + ord(number[0])
 	
 def sPLFFile(index):
 	global file_size	
@@ -66,24 +68,33 @@ def sPLFEntryTag(index):
 	result.writelines("dwCRC32 : "+ bin[index:index+4].encode("hex") + '\n');index+=4
 	result.writelines("uk_0x0C : "+ bin[index:index+4].encode("hex") + '\n');index+=4
 	result.writelines("dwUncompressedSize : "+ bin[index:index+4].encode("hex") + '\n\n');index+=4
-	index+=next_index
-	return index
+#	index+=next_index
+	return index, next_index
 	
 
 if __name__ == "__main__":
-  Init()
-  while(1):
-  	if bin[index:index+4].encode("hex") == "504c4621":
-  		index = sPLFFile(index)
-  	elif bin[index:index+4].encode("hex") == "00000000" or "00000003" or "00000007" or "00000009" or "0000000b" or "0000000c":
-  		if index%4 != 0 :
-  			index+=4-(index%4)
-  		index = sPLFEntryTag(index)
-  		if file_size <= index:
-  			break
-  
-  input_file.close()
-  result.close()
-  print " Result File store in " + sys.argv[1] + "/log.txt"
+	Init()
+	while(1):
+		header = bin[index:index + 4].encode("hex")
+#		if bin[index:index+4].encode("hex") == "504c4621":
+		if header == "504c4621":
+			index = sPLFFile(index)
+#		elif bin[index:index+4].encode("hex") == "00000000" or "00000003" or "00000007" or "00000009" or "0000000b" or "0000000c":
+		elif header == "00000000" or "00000003" or "00000007" or "00000009" or "0000000b" or "0000000c":
+			if index%4 != 0 :
+				index += 4-(index%4)
+			(index, size) = sPLFEntryTag(index)
+			start = index
+			end = index + size
+
+			index += size
+			if header == "00000009" :
+#				print start, end
+			if file_size <= index:
+				break
+	
+	input_file.close()
+	result.close()
+	print " Result File store in " + sys.argv[1] + "/log.txt"
 
 ##
