@@ -23,6 +23,7 @@ def Extract(data, start, end):
 		gtmp.close()
 		otmp.close()
 
+		os.remove(tmp_file_gz)
 		error = False
 	else:
 		error = True
