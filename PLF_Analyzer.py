@@ -4,33 +4,34 @@ import struct
 import sys
 import os
 
-import Data_Extract.py
+from Data_Extract import *
 
 index = 0
 next_index = 0
+result_dir = ""
 
-def Init() :
+def Init():
 	global bin, result, input_file
 	argc = len(sys.argv)
-	if argc < 2 :
+	if argc < 2:
 		print "Usage: " + sys.argv[0] + " FILE [RESULT]"
 		print "	FILE: PLF File"
 		print "	RESULT: Make result directory"
 		print "					default: plf"
 		sys.exit()
-	if argc >= 2 :
-		try :
+	if argc >= 2:
+		try:
 			input_file = open(sys.argv[1], "rb")
-		except IOError :
+		except IOError:
 			print "I/O error: file doesn't exist"; sys.exit()
-	if argc >= 3 :
+	if argc >= 3:
 		result_dir = sys.argv[2]
-	else :
+	else:
 		result_dir = "plf"
 
-	if not os.path.exists(result_dir) :
+	if not os.path.exists(result_dir):
 		os.mkdir(result_dir)
-	else :
+	else:
 		print "Directory does exist"
 		sys.exit()
 
@@ -81,20 +82,21 @@ if __name__ == "__main__":
 			index = sPLFFile(index)
 #		elif bin[index:index+4].encode("hex") == "00000000" or "00000003" or "00000007" or "00000009" or "0000000b" or "0000000c":
 		elif header == "00000000" or "00000003" or "00000007" or "00000009" or "0000000b" or "0000000c":
-			if index%4 != 0 :
+			if index%4 != 0:
 				index += 4-(index%4)
 			(index, size) = sPLFEntryTag(index)
 			start = index
 			end = index + size
 
 			index += size
-			if header == "00000009" :
+			if header == "00000009":
 #				print start, end
+				tmp_data = Extract(bin, start, end)
+#				MakeFile(
 			if file_size <= index:
 				break
 	
 	input_file.close()
 	result.close()
-	print " Result File store in " + sys.argv[1] + "/log.txt"
+	print " Result File store in " + result_dir + "/log.txt"
 
-##
