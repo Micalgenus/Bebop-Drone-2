@@ -4,28 +4,36 @@ import struct
 import sys
 import os
 
-try :
-  argc = len(sys.argv)
-  input_file = open(sys.argv[1],"rb")
-  if argc >= 2:
-    result_file = sys.argv[2];
-  else:
-    result_file = "result.txt"
-    input_file = open(sys.argv[1],"rb")
-  if argc >= 2:
-	  result_file = sys.argv[2];
-  else:
-	  result_file = "result.txt"
-except IOError:
-  print "I/O error: file doesn't exist"; sys.exit()
-except IndexError:
-	print "usage : " + sys.argv[0]+" FILE [RESULT]"; sys.exit()
-result = open(result_file, "wb")
-bin = input_file.read()
-result_directory = os.getcwd()
+index = 0
+next_index = 0
 
-index=0
-next_index=0
+def Init() :
+	global bin, result, input_file
+	argc = len(sys.argv)
+	if argc < 2 :
+		print "Usage: " + sys.argv[0] + " FILE [RESULT]"
+		print "  FILE: PLF File"
+		print "  RESULT: Make result directory"
+		print "          default: plf"
+		sys.exit()
+	if argc >= 2 :
+		try :
+			input_file = open(sys.argv[1], "rb")
+		except IOError :
+			print "I/O error: file doesn't exist"; sys.exit()
+	if argc >= 3 :
+		result_dir = sys.argv[2]
+	else :
+		result_dir = "plf"
+
+	if not os.path.exists(result_dir) :
+		os.mkdir(result_dir)
+	else :
+		print "Directory does exist"
+		sys.exit()
+
+	result = open(result_dir + "/log.txt", "wb")
+	bin = input_file.read()
 
 def EndianConvert(number):
   return 0x1000000 * ord(number[3]) + 0x10000 * ord(number[2]) + 0x100 * ord(number[1]) + ord(number[0])
@@ -61,12 +69,13 @@ def sPLFEntryTag(index):
 	index+=next_index
 	return index
 	
-if bin[index:index+4].encode("hex") == "504c4621":
-	index = sPLFFile(index)
 
 if __name__ == "__main__":
+  Init()
   while(1):
-  	if bin[index:index+4].encode("hex") == "00000000" or "00000003" or "00000007" or "00000009" or "0000000b" or "0000000c":
+  	if bin[index:index+4].encode("hex") == "504c4621":
+  		index = sPLFFile(index)
+  	elif bin[index:index+4].encode("hex") == "00000000" or "00000003" or "00000007" or "00000009" or "0000000b" or "0000000c":
   		if index%4 != 0 :
   			index+=4-(index%4)
   		index = sPLFEntryTag(index)
@@ -75,6 +84,6 @@ if __name__ == "__main__":
   
   input_file.close()
   result.close()
-  print " Result File store in " + result_directory + "/" + result_file
+  print " Result File store in " + sys.argv[1] + "/log.txt"
 
 ##
